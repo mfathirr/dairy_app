@@ -3,6 +3,7 @@ import 'package:dairy_app/data/datasources/auth_remote_datasource.dart';
 import 'package:dairy_app/pages/home_page.dart';
 import 'package:dairy_app/presentations/auth/login_page.dart';
 import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
+import 'package:dairy_app/presentations/bloc/logout/logout_bloc.dart';
 import 'package:dairy_app/presentations/bloc/register/register_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +24,9 @@ class MyApp extends StatelessWidget {
           ),
           BlocProvider(
             create: (context) => LoginBloc(AuthRemoteDatasource()),
+          ),
+          BlocProvider(
+            create: (context) => LogoutBloc(AuthRemoteDatasource()),
           ),
         ],
         child: MaterialApp(

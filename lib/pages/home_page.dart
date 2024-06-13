@@ -1,4 +1,8 @@
+import 'package:dairy_app/presentations/auth/login_page.dart';
+import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
+import 'package:dairy_app/presentations/bloc/logout/logout_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'first_page.dart';
 import 'second_page.dart';
@@ -32,7 +36,32 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Home Page"),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
+          BlocConsumer<LogoutBloc, LogoutState>(
+            listener: (context, state) {},
+            builder: (context, state) {
+              if (state is LogoutLoading) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              if (state is LogoutSuccess) {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (context) => const LoginPage()));
+              }
+
+              if (state is LogoutFailed) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(state.message),
+                  backgroundColor: Colors.red,
+                ));
+              }
+
+              return IconButton(
+                  onPressed: () {
+                    context.read<LogoutBloc>().add(LogoutButtonPressed());
+                  },
+                  icon: const Icon(Icons.logout));
+            },
+          )
         ],
       ),
       body: contents[index],
