@@ -1,5 +1,8 @@
+import 'package:dairy_app/data/datasources/auth_local_datasource.dart';
 import 'package:dairy_app/data/datasources/auth_remote_datasource.dart';
+import 'package:dairy_app/pages/home_page.dart';
 import 'package:dairy_app/presentations/auth/login_page.dart';
+import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
 import 'package:dairy_app/presentations/bloc/register/register_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,12 +16,33 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => RegisterBloc(AuthRemoteDatasource()),
-      child: const MaterialApp(
-        title: 'Flutter Demo',
-        home: LoginPage(),
-      ),
-    );
+    return MultiBlocProvider(
+        providers: [
+          BlocProvider(
+            create: (context) => RegisterBloc(AuthRemoteDatasource()),
+          ),
+          BlocProvider(
+            create: (context) => LoginBloc(AuthRemoteDatasource()),
+          ),
+        ],
+        child: MaterialApp(
+          home: FutureBuilder<bool>(
+            future: AuthLocalDatasource().isLogin(),
+            builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Scaffold(
+                    body: Center(child: CircularProgressIndicator()));
+              }
+              if (snapshot.connectionState == ConnectionState.done) {
+                return snapshot.data! ? const HomePage() : const LoginPage();
+              }
+              return const Scaffold(
+                body: Center(
+                  child: Text('Error'),
+                ),
+              );
+            },
+          ),
+        ));
   }
 }

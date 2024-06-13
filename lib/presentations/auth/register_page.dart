@@ -1,4 +1,3 @@
-import 'package:dairy_app/data/datasources/auth_remote_datasource.dart';
 import 'package:dairy_app/data/model/request/register_request_model.dart';
 import 'package:dairy_app/presentations/auth/login_page.dart';
 import 'package:dairy_app/presentations/bloc/register/register_bloc.dart';
@@ -20,15 +19,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Register Page",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: ListView(
         children: [
           const SizedBox(
@@ -80,34 +70,59 @@ class _RegisterPageState extends State<RegisterPage> {
           ),
           Padding(
               padding: const EdgeInsets.all(16),
-              child: BlocBuilder<RegisterBloc, RegisterState>(
-                builder: (context, state) {
-                  if (state is RegisterLoading) {
-                    return const Center(child: CircularProgressIndicator());
+              child: BlocListener<RegisterBloc, RegisterState>(
+                listener: (context, state) {
+                  if (state is RegisterSuccess) {
+                    Navigator.push(context, MaterialPageRoute(
+                      builder: (context) {
+                        return const LoginPage();
+                      },
+                    ));
                   }
-                  return ElevatedButton(
-                    onPressed: () async {
-                      final dataModel = RegisterRequestModel(
-                        name: _nameController.text,
-                        email: _emailController.text,
-                        password: _passwordController.text,
-                      );
 
-                      context
-                          .read<RegisterBloc>()
-                          .add(RegisterButtonPressed(data: dataModel));
-                    },
-                    child: const Text('Login'),
-                  );
+                  if (state is RegisterFailed) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
                 },
+                child: BlocBuilder<RegisterBloc, RegisterState>(
+                  builder: (context, state) {
+                    if (state is RegisterLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: () async {
+                        final dataModel = RegisterRequestModel(
+                          name: _nameController.text,
+                          email: _emailController.text,
+                          password: _passwordController.text,
+                        );
+
+                        context
+                            .read<RegisterBloc>()
+                            .add(RegisterButtonPressed(data: dataModel));
+                      },
+                      child: const Text('Register'),
+                    );
+                  },
+                ),
               )),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Don't have account"),
+              const Text("Already have an account?"),
               TextButton(
-                onPressed: () {},
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const LoginPage(),
+                      ));
+                },
                 child: const Text(
-                  'Register',
+                  'Login',
                   style: TextStyle(decoration: TextDecoration.underline),
                 ),
               ),

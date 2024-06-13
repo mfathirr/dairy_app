@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         title: const Text("Home Page"),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert))
+          IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
         ],
       ),
       body: contents[index],

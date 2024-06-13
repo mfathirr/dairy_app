@@ -1,5 +1,8 @@
+import 'package:dairy_app/pages/home_page.dart';
 import 'package:dairy_app/presentations/auth/register_page.dart';
+import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -9,18 +12,11 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passowordController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Login Page",
-          style: TextStyle(
-            color: Colors.white,
-          ),
-        ),
-        centerTitle: true,
-      ),
       body: ListView(
         children: [
           const SizedBox(
@@ -44,17 +40,19 @@ class _LoginPageState extends State<LoginPage> {
             height: 16,
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: TextField(
-              decoration: InputDecoration(
+              controller: _emailController,
+              decoration: const InputDecoration(
                   border: OutlineInputBorder(), labelText: 'Email'),
             ),
           ),
           Padding(
-            padding: EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
             child: TextField(
+              controller: _passowordController,
               obscureText: true,
-              decoration: InputDecoration(
+              decoration: const InputDecoration(
                 border: OutlineInputBorder(),
                 labelText: 'Password',
               ),
@@ -62,13 +60,43 @@ class _LoginPageState extends State<LoginPage> {
           ),
           Padding(
               padding: const EdgeInsets.all(16),
-              child: ElevatedButton(
-                onPressed: () {},
-                child: const Text('Register'),
+              child: BlocListener<LoginBloc, LoginState>(
+                listener: (context, state) {
+                  if (state is LoginSuccess) {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomePage(),
+                        ));
+                  }
+
+                  if (state is LoginFailed) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.message),
+                      backgroundColor: Colors.red,
+                    ));
+                  }
+                },
+                child: BlocBuilder<LoginBloc, LoginState>(
+                  builder: (context, state) {
+                    if (state is LoginLoading) {
+                      return const Center(child: CircularProgressIndicator());
+                    }
+                    return ElevatedButton(
+                      onPressed: () {
+                        context.read<LoginBloc>().add(LoginButtonPressed(
+                            email: _emailController.text,
+                            password: _passowordController.text));
+                      },
+                      child: const Text('Login'),
+                    );
+                  },
+                ),
               )),
           Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("Already have an account"),
+              const Text("Don't have account?"),
               TextButton(
                 onPressed: () {
                   Navigator.push(
@@ -78,7 +106,7 @@ class _LoginPageState extends State<LoginPage> {
                       ));
                 },
                 child: const Text(
-                  'Login',
+                  'Register',
                   style: TextStyle(decoration: TextDecoration.underline),
                 ),
               ),
