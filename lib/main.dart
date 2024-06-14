@@ -5,6 +5,7 @@ import 'package:dairy_app/presentations/auth/login_page.dart';
 import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
 import 'package:dairy_app/presentations/bloc/logout/logout_bloc.dart';
 import 'package:dairy_app/presentations/bloc/register/register_bloc.dart';
+import 'package:dairy_app/presentations/notes/notes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -38,7 +39,7 @@ class MyApp extends StatelessWidget {
                     body: Center(child: CircularProgressIndicator()));
               }
               if (snapshot.connectionState == ConnectionState.done) {
-                return snapshot.data! ? const HomePage() : const LoginPage();
+                return snapshot.data! ? const NotesPage() : const LoginPage();
               }
               return const Scaffold(
                 body: Center(

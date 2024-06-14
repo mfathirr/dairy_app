@@ -1,6 +1,7 @@
 import 'package:dairy_app/pages/home_page.dart';
 import 'package:dairy_app/presentations/auth/register_page.dart';
 import 'package:dairy_app/presentations/bloc/login/login_bloc.dart';
+import 'package:dairy_app/presentations/notes/notes_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -66,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const HomePage(),
+                          builder: (context) => const NotesPage(),
                         ));
                   }
 

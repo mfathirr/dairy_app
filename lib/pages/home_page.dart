@@ -49,8 +49,8 @@ class _HomePageState extends State<HomePage> {
               }
 
               if (state is LogoutFailed) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(state.message),
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text("Error min"),
                   backgroundColor: Colors.red,
                 ));
               }
